@@ -114,7 +114,7 @@ class UnixInteractiveProcess(subprocess.Popen):
         Called when data is received from the subprocess on either
         stdout or stderr.
 
-        Implementations may call `stdin.write(bytes)` to send data
+        Implementations may call `self.stdin.write(bytes)` to send data
         to the subprocess.
 
         :param queue: either self.stdout_buffer or self.stderr_buffer

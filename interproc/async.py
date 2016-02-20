@@ -1,7 +1,3 @@
-import sys
-import logging
-import asyncio
-
 from asyncio import events
 from asyncio import streams
 from asyncio.coroutines import coroutine
@@ -55,26 +51,3 @@ def run_subprocess_shell(cmd, callback, stdin=PIPE, stdout=PIPE, stderr=PIPE,
 
     output = loop.run_until_complete(run_subprocess())
     return output
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-
-    if sys.platform == 'win32':
-        loop = asyncio.ProactorEventLoop()  # for subprocess pipes on Windows
-        asyncio.set_event_loop(loop)
-    else:
-        loop = asyncio.get_event_loop()
-
-    def callback(process, fd, data):
-        if data == b'starting\n':
-            process.stdin.write(b'something\n')
-        if data == b'something\n':
-            process.stdin.close()  # tell cat to stop waiting for input
-
-    CMD = 'echo starting && cat && echo stopping 1>&2'
-    process, stdout, stderr = run_subprocess_shell(CMD, callback)
-
-    assert process.returncode == 0
-    assert stdout == b'starting\nsomething\n'
-    assert stderr == b'stopping\n'
